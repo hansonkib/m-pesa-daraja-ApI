@@ -6,4 +6,8 @@ mpesa:
     consumer-secret: 7UYaI2TFTaregJmA
     grant-type: client_credentials
     oauth-endpoint: https://sandbox.safaricom.co.ke/oauth/v1/generate
-    
+    shortCode: 600992
+    responseType: Completed
+    confirmation-url: http://756e-197-156-190-168.ngrok.io/confirmation
+    validation-url: http://756e-197-156-190-168.ngrok.io/validation
+    register-url-endpoint: https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl
