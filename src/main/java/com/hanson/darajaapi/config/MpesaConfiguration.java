@@ -18,7 +18,7 @@ public class MpesaConfiguration {
     private String validationURL;
     private String responseType;
     private String registerUrlEndpoint;
-
+    private String simulateTransactionEndpoint;
     @Override
     public String toString() {
 
@@ -96,5 +96,13 @@ public class MpesaConfiguration {
 
     public void setRegisterUrlEndpoint(String registerUrlEndpoint) {
         this.registerUrlEndpoint = registerUrlEndpoint;
+    }
+
+    public String getSimulateTransactionEndpoint() {
+        return simulateTransactionEndpoint;
+    }
+
+    public void setSimulateTransactionEndpoint(String simulateTransactionEndpoint) {
+        this.simulateTransactionEndpoint = simulateTransactionEndpoint;
     }
 }

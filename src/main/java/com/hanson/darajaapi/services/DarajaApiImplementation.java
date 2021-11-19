@@ -2,9 +2,7 @@ package com.hanson.darajaapi.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hanson.darajaapi.config.MpesaConfiguration;
-import com.hanson.darajaapi.dtos.AccessTokenResponse;
-import com.hanson.darajaapi.dtos.RegisterUrlRequest;
-import com.hanson.darajaapi.dtos.RegisterUrlResponse;
+import com.hanson.darajaapi.dtos.*;
 import com.hanson.darajaapi.utils.HelperUtility;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -93,5 +91,31 @@ public class DarajaApiImplementation implements DarajaApi {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public SimulateTransactionResponse simulateC2BTransaction(SimulateTransactionRequest simulateTransactionRequest) {
+        AccessTokenResponse accessTokenResponse = getAccessToken();
+//        log.info(String.format("Access Token: %s", accessTokenResponse.getAccessToken()));
+        RequestBody body = RequestBody.create(JSON_MEDIA_TYPE,
+                Objects.requireNonNull(HelperUtility.toJson(simulateTransactionRequest)));
+
+        Request request = new Request.Builder()
+                .url(mpesaConfiguration.getSimulateTransactionEndpoint())
+                .post(body)
+                .addHeader(AUTHORIZATION_HEADER_STRING, String.format("%s %s", BEARER_AUTH_STRING, accessTokenResponse.getAccessToken()))
+                .build();
+
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            assert response.body() != null;
+            // use Jackson to Decode the ResponseBody ...
+
+            return objectMapper.readValue(response.body().string(), SimulateTransactionResponse.class);
+        } catch (IOException e) {
+//            log.error(String.format("Could not simulate C2B transaction -> %s", e.getLocalizedMessage()));
+            return null;
+        }
+
     }
 }
