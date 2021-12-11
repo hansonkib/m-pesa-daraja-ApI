@@ -1,5 +1,6 @@
 package com.hanson.darajaapi.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hanson.darajaapi.dtos.*;
 import com.hanson.darajaapi.repository.B2CC2BEntriesRepository;
 import com.hanson.darajaapi.services.DarajaApi;
@@ -65,5 +66,25 @@ public class MpesaController {
         b2CC2BEntriesRepository.save(b2C_c2BEntry);
 
         return ResponseEntity.ok(simulateTransactionResponse);
+    }
+
+    @PostMapping(path = "/transaction-result", produces = "application/json")
+    public ResponseEntity<AcknowledgeResponse> b2cTransactionAsyncResults(@RequestBody B2CTransactionAsyncResponse b2CTransactionAsyncResponse)
+            throws JsonProcessingException {
+//        log.info("============ Transaction Result =============");
+//        log.info(objectMapper.writeValueAsString(b2CTransactionAsyncResponse));
+        Result b2cResult = b2CTransactionAsyncResponse.getResult();
+        B2C_C2B_Entries b2cInternalRecord = b2CC2BEntriesRepository.findByConversationIdOrOriginatorConversationId(
+                b2cResult.getConversationID(),
+                b2cResult.getOriginatorConversationID()
+        );
+        b2cInternalRecord.setRawCallbackPayloadResponse(b2CTransactionAsyncResponse);
+        b2cInternalRecord.setResultCode(String.valueOf(b2cResult.getResultCode()));
+        b2cInternalRecord.setTransactionId(b2cResult.getTransactionID());
+
+        b2CC2BEntriesRepository.save(b2cInternalRecord);
+
+        return ResponseEntity.ok(acknowledgeResponse);
+
     }
 }
